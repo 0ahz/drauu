@@ -1,6 +1,6 @@
 import type { StrokeOptions } from 'perfect-freehand'
 
-export type DrawingMode = 'draw' | 'stylus' | 'line' | 'rectangle' | 'ellipse' | 'eraseLine'
+export type DrawingMode = 'selection' | 'draw' | 'stylus' | 'line' | 'rectangle' | 'ellipse' | 'eraseLine' | 'text'
 
 export interface Brush {
   /**
@@ -110,12 +110,15 @@ export interface Options {
 
 export interface EventsMap {
   start: () => void
+  move: () => void
   end: () => void
-  committed: (node: SVGElement | undefined) => void
+  committed: (node: SVGElement | SVGElement[] | undefined) => void
   canceled: () => void
   changed: () => void
   mounted: () => void
   unmounted: () => void
+  modeChanged: (mode: DrawingMode) => void
+  brushChanged: (brush: Brush) => void
 }
 
 export interface Operation {

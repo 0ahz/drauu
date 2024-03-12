@@ -1,6 +1,6 @@
 import 'virtual:windi.css'
-import type { Brush, DrawingMode } from 'drauu'
-import { createDrauu } from 'drauu'
+import type { Brush, DrawingMode } from '@wfkit/drauu'
+import { createDrauu } from '@wfkit/drauu'
 import './style.css'
 
 const drauu = createDrauu({
@@ -42,6 +42,9 @@ window.addEventListener('keydown', (e) => {
   else if (e.code === 'KeyE') {
     drauu.mode = 'ellipse'
   }
+  else if (e.code === 'KeyT') {
+    drauu.mode = 'text'
+  }
   else if (e.code === 'KeyC') {
     drauu.clear()
   }
@@ -52,6 +55,9 @@ window.addEventListener('keydown', (e) => {
   else if (e.code === 'Minus') {
     drauu.brush.size = Math.max(1, drauu.brush.size - 0.5)
     sizeEl.value = `${drauu.brush.size}`
+  }
+  else if (e.code === 'Escape') {
+    drauu.mode = 'selection'
   }
 })
 
@@ -71,6 +77,7 @@ document.getElementById('download')?.addEventListener('click', () => {
 })
 
 const modes: { el: HTMLElement, brush: Partial<Brush> }[] = [
+  { el: document.getElementById('m-selection')!, brush: { mode: 'selection', arrowEnd: false } },
   { el: document.getElementById('m-stylus')!, brush: { mode: 'stylus', arrowEnd: false } },
   { el: document.getElementById('m-eraser')!, brush: { mode: 'eraseLine', arrowEnd: false } },
   { el: document.getElementById('m-draw')!, brush: { mode: 'draw', arrowEnd: false } },
@@ -78,6 +85,7 @@ const modes: { el: HTMLElement, brush: Partial<Brush> }[] = [
   { el: document.getElementById('m-arrow')!, brush: { mode: 'line', arrowEnd: true } },
   { el: document.getElementById('m-rect')!, brush: { mode: 'rectangle', arrowEnd: false } },
   { el: document.getElementById('m-ellipse')!, brush: { mode: 'ellipse', arrowEnd: false } },
+  { el: document.getElementById('m-text')!, brush: { mode: 'text', arrowEnd: false } },
 ]
 modes.forEach(({ el, brush }) => {
   el.addEventListener('click', () => {
@@ -111,3 +119,32 @@ colors
       drauu.brush.color = (i as HTMLElement).dataset.color!
     })
   })
+
+const events = [
+  'start',
+  'move',
+  'end',
+  'committed',
+  'canceled',
+  'changed',
+  'mounted',
+  'unmounted',
+  'modeChanged',
+  'brushChanged',
+]
+
+events.forEach((name: any) => {
+  drauu.on(name, (e: any) => {
+    console.log(name, e || '')
+  })
+})
+
+drauu.on('committed', () => {
+  if (drauu.mode === 'text')
+    drauu.mode = 'selection'
+})
+
+drauu.on('modeChanged', (mode) => {
+  modes.forEach(({ el }) => el.classList.remove('active'))
+  document.getElementById(`m-${mode}`)!.classList.add('active')
+})

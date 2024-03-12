@@ -7,7 +7,7 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "paths": {
-      "drauu": ["./packages/core/src/index.ts"]
+      "@wfkit/drauu": ["./packages/core/src/index.ts"]
     },
     "resolveJsonModule": true,
     "strict": true,

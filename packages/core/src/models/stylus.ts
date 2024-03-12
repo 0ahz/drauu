@@ -1,4 +1,4 @@
-import * as pf from 'perfect-freehand'
+import { getStroke } from 'perfect-freehand'
 import type { Brush, Point } from '../types'
 import { BaseModel } from './base'
 
@@ -33,6 +33,10 @@ export class StylusModel extends BaseModel<SVGPathElement> {
 
     if (!path)
       return false
+
+    if (this.points.length < 2)
+      return false
+
     return true
   }
 
@@ -41,15 +45,17 @@ export class StylusModel extends BaseModel<SVGPathElement> {
   }
 
   static getSvgData(points: Point[], brush: Brush) {
-    const stroke = pf.getStroke(points, {
+    const stroke = getStroke(points, {
       size: brush.size,
-      thinning: 0.9,
+      thinning: 0,
       simulatePressure: false,
       start: {
-        taper: 5,
+        taper: 0,
+        cap: true,
       },
       end: {
-        taper: 5,
+        taper: 0,
+        cap: true,
       },
       ...brush.stylusOptions,
     })

@@ -6,7 +6,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '~/': `${path.resolve(__dirname, 'src')}/`,
-      'drauu': path.resolve(__dirname, '../packages/core/src/index.ts'),
+      '@wfkit/drauu': path.resolve(__dirname, '../packages/core/src/index.ts'),
     },
   },
   plugins: [

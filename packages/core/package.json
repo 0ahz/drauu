@@ -1,5 +1,5 @@
 {
-  "name": "@drauu/core",
+  "name": "@wfkit/drauu",
   "version": "0.4.0",
   "author": "Anthony Fu <anthonyfu117@hotmail.com>",
   "license": "MIT",
@@ -34,6 +34,9 @@
     "prepublishOnly": "nr build"
   },
   "devDependencies": {
-    "perfect-freehand": "^1.2.0"
+    "moveable": "^0.53.0",
+    "perfect-debounce": "^1.0.0",
+    "perfect-freehand": "^1.2.0",
+    "selecto": "^1.26.3"
   }
 }

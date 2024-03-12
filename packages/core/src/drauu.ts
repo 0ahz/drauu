@@ -44,6 +44,8 @@ export class Drauu {
 
     this.options.brush!.mode = v
     this.model.onSelected(this.el)
+
+    this._emitter.emit('modeChanged', v)
   }
 
   get brush() {
@@ -51,7 +53,12 @@ export class Drauu {
   }
 
   set brush(v: Brush) {
+    const mode = this.mode
     this.options.brush = v
+    if (v.mode && mode !== v.mode)
+      this._emitter.emit('modeChanged', this.mode)
+
+    this._emitter.emit('brushChanged', this.brush)
   }
 
   resolveSelector<T>(selector: string | T | null | undefined): T | null {
@@ -146,11 +153,13 @@ export class Drauu {
     if (this.model._eventMove(event)) {
       event.stopPropagation()
       event.preventDefault()
-      this._emitter.emit('changed')
+      this._emitter.emit('move')
     }
   }
 
   private eventStart(event: PointerEvent) {
+    if (this.mode === 'selection')
+      return
     if (!this.acceptsInput(event))
       return
     event.stopPropagation()
@@ -163,7 +172,6 @@ export class Drauu {
     this._currentNode = this.model._eventDown(event)
     if (this._currentNode && this.mode !== 'eraseLine')
       this.el!.appendChild(this._currentNode)
-    this._emitter.emit('changed')
   }
 
   private eventEnd(event: PointerEvent) {
@@ -186,7 +194,6 @@ export class Drauu {
     }
     this.drawing = false
     this._emitter.emit('end')
-    this._emitter.emit('changed')
     this._originalPointerId = null
   }
 
@@ -215,6 +222,17 @@ export class Drauu {
     const node = this._currentNode
     this._currentNode = undefined
     this._emitter.emit('committed', node)
+    this._emitter.emit('changed')
+  }
+
+  selectionCommit(op: Operation, currentNodes: SVGElement[]) {
+    this._opStack.length = this._opIndex
+    this._opStack.push(op)
+    this._opIndex++
+
+    this._currentNode = undefined
+    this._emitter.emit('committed', currentNodes)
+    this._emitter.emit('changed')
   }
 
   clear() {
